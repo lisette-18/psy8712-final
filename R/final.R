@@ -22,3 +22,4 @@ gss_2004_import_tbl <- read_sav("../data/GSS2004.sav") %>%
 
 gss_2004_tbl <- gss_2004_import_tbl[complete.cases(gss_2004_import_tbl$avg_att, gss_2004_import_tbl$avg_probehav), ]
 
+#write_csv(gss_2004_tbl, "../data/gss_clean.csv")
