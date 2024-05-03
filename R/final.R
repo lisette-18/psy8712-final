@@ -86,19 +86,81 @@ ggplot(aes(x = avg_probehav)) +
     labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Boxplot of Empathy and Religious Strength on Prosocial Behavior", fill = "Finding Strength in Religion")) %>%
   ggsave("../figs/fig7.png", ., width=1920, height=1080, units="px")
 
-      
 #Analysis
 
-##correlation between attitudes and behaviors for Research Q1
+##Descriptive Stats
+partyid <- gss_2004_tbl %>% #saving as a tibble so I can display the table in the publication section
+  group_by(partyid) %>% 
+  summarise(count = n(),
+            avg_e = mean(avg_empathy),
+            sd_empathy = sd(avg_empathy),
+            avg_pb = mean(avg_probehav),
+            sd_pb = sd(avg_probehav))
+
+sex <- gss_2004_tbl %>% #saving as a tibble so I can display the table in the publication section
+  group_by(sex) %>% 
+  summarise(count = n(),
+            avg_e = mean(avg_empathy),
+            sd_empathy = sd(avg_empathy),
+            avg_pb = mean(avg_probehav),
+            sd_pb = sd(avg_probehav))
+
+race <- gss_2004_tbl %>% #saving as a tibble so I can display the table in the publication section
+  group_by(race) %>% 
+  summarise(count = n(),
+            avg_e = mean(avg_empathy),
+            sd_empathy = sd(avg_empathy),
+            avg_pb = mean(avg_probehav),
+            sd_pb = sd(avg_probehav))
+
+age <- gss_2004_tbl %>% #saving as a tibble so I can display the table in the publication section
+  group_by(age) %>% 
+  summarise(count = n(),
+            avg_e = mean(avg_empathy),
+            sd_empathy = sd(avg_empathy),
+            avg_pb = mean(avg_probehav),
+            sd_pb = sd(avg_probehav))
+
+rel_strength <- gss_2004_tbl %>% #saving as a tibble so I can display the table in the publication section
+  group_by(rel_strength) %>% 
+  summarise(count = n(),
+            avg_e = mean(avg_empathy),
+            sd_empathy = sd(avg_empathy),
+            avg_pb = mean(avg_probehav),
+            sd_pb = sd(avg_probehav))
+#csv files
+##write_csv(partyid,"../figs/party_id.csv")
+##write_csv(age, "../figs/age.csv")
+##write_csv(rel_strength, "../figs/rel_strength.csv")
+##write_csv(race, "../figs/race.csv")
+##write(sex, "../figs/sex.csv")
+
+##correlation between attitudes and behaviors 
 cor.test(gss_2004_tbl$avg_empathy, gss_2004_tbl$avg_probehav)
 
-##liner regression model for Research Q2
+##liner regression model for sex
 lm1 <- lm(avg_probehav ~ sex * avg_empathy, data = gss_2004_tbl)
 summary(lm1)
 
-##linear regression model for Research Q3
+##linear regression model for race
 lm2 <- lm(avg_probehav ~ race * avg_empathy, data = gss_2004_tbl)
 summary(lm2)
+
+##linear regression model for age
+lm3 <- lm(avg_probehav ~ age * avg_empathy, data = gss_2004_tbl)
+summary(lm3)
+
+##linear regression model for party id
+lm4 <- lm(avg_probehav ~ partyid * avg_empathy, data = gss_2004_tbl)
+summary(lm4)
+
+##linear regression model for strength in religion
+lm5 <- lm(avg_probehav ~ rel_strength * avg_empathy, data = gss_2004_tbl)
+summary(lm5)
+
+##linear regression model for all potential moderators
+lm6 <- lm(avg_probehav ~ . , data = gss_2004_tbl)
+summary(lm6)
 
 ##machine learning models
 holdout_indices <- createDataPartition(gss_2004_tbl$avg_probehav,
