@@ -4,7 +4,6 @@ library(tidyverse)
 library(haven)
 library(caret)
 library(rsconnect)
-set.seed(8712)
 
 #Data Import and Cleaning
 gss_2004_import_tbl <- read_sav("../data/GSS2004.sav") %>%
@@ -35,10 +34,6 @@ gss_2004_tbl <- gss_2004_import_tbl[complete.cases(gss_2004_import_tbl$avg_empat
 
 #write_csv(gss_2004_tbl, "../data/gss_clean.csv")
 
-##clean data for shiny app
-gss_shiny <- gss_2004_tbl %>%
-  select(sex, race, age,partyid, rel_strength, avg_empathy, avg_probehav) %>%
-  saveRDS("../shiny/gss_shiny/import.RDS")
 
 #Visualization
 
@@ -269,3 +264,20 @@ table1_tbl <- tibble(
     make_it_pretty(holdout_m4)
   )
 )
+
+print(partyid)
+
+#View(age) a lot of variables so view is better
+
+print(sex)
+
+print(race)
+
+print(rel_strength)
+
+print(table1_tbl)
+
+##clean data for shiny app
+gss_shiny <- gss_2004_tbl %>%
+  select(sex, race, age, partyid, rel_strength, avg_empathy, avg_probehav) %>%
+  saveRDS("../shiny/gss_shiny/import.RDS")
