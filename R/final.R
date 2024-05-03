@@ -3,6 +3,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 library(tidyverse)
 library(haven)
 library(caret)
+library(rsconnect)
 set.seed(8712)
 
 #Data Import and Cleaning
@@ -31,50 +32,47 @@ gss_2004_import_tbl <- read_sav("../data/GSS2004.sav") %>%
 gss_2004_tbl <- gss_2004_import_tbl[complete.cases(gss_2004_import_tbl$avg_empathy, gss_2004_import_tbl$avg_probehav, gss_2004_import_tbl$PARTYID, 
                                                    gss_2004_import_tbl$AGE, gss_2004_import_tbl$rel_strength), ]
 
-write_csv(gss_2004_tbl, "../data/gss_clean.csv")
+#write_csv(gss_2004_tbl, "../data/gss_clean.csv")
 
-#clean data for shiny app
+##clean data for shiny app
 gss_shiny <- gss_2004_tbl %>%
   select(SEX, RACE, AGE,PARTYID, rel_strength, avg_empathy, avg_probehav) %>%
   saveRDS("../shiny/gss_shiny/import.RDS")
 
 #Visualization
 
-gss_2004_tbl %>%
+(gss_2004_tbl %>%
   ggplot(aes(x=avg_empathy, y=avg_probehav)) +
-  geom_point() +
-  geom_smooth(method="lm", color="purple") +
-  labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Empathy and Prosocial Behavior")
+  geom_jitter() +
+  labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Empathy and Prosocial Behavior")) %>%
+  ggsave("../figs/fig1.png", ., width=1920, height=1080, units="px")
 
-ggplot(gss_2004_tbl,
-       aes(x=avg_empathy)) +
-  geom_histogram()
+(gss_2004_tbl %>%
+       ggplot(aes(x=avg_empathy)) +
+  geom_histogram() +
+  labs(x = "Empathy Scores", y = "Frequency", title = "Histogram of Empathy Scores")) %>%
+  ggsave("../figs/fig2.png", ., width=1920, height=1080, units="px")
+  
+(gss_2004_tbl %>%
+ggplot(aes(x = avg_probehav)) +
+  geom_histogram() +
+    labs(x= "Prosocial Behavior Scores", y = "Frequency", title = "Histogram of Prosocial Behavior Scores")) %>%
+  ggsave("../figs/fig3.png", ., width=1920, height=1080, units="px")
 
-ggplot(gss_2004_tbl,
-       aes(x = avg_probehav)) +
-  geom_histogram()
+(gss_2004_tbl %>%
+    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = RACE)) +
+    geom_boxplot() +
+    labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Boxplot of Empathy and Race on Prosocial Behavior")) %>%
+    ggsave("../figs/fig4.png", ., width=1920, height=1080, units="px")
+  
+(gss_2004_tbl %>%
+    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = SEX)) +
+    geom_boxplot()+
+    labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Boxplot of Empathy and Sex on Prosocial Behavior")) %>%
+  ggsave("../figs/fig5.png", ., width=1920, height=1080, units="px")
 
-gss_2004_tbl %>%
-  ggplot(aes(x=avg_empathy, y=avg_probehav, color = SEX)) +
-  geom_point() +
-  geom_smooth(method="lm", color="purple") +
-  labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Empathy and Prosocial Behavior")
 
-gss_2004_tbl %>%
-  ggplot(aes(x=avg_att, y=avg_probehav, color = RACE)) +
-  geom_point() +
-  geom_smooth(method="lm", color="purple") +
-  labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Empathy and Prosocial Behavior")
 
-gss_2004_tbl %>% 
-  ggplot(aes(x= avg_att, y= avg_probehav, fill= RACE)) + 
-  geom_boxplot() +
-  labs(title= "Prosocial Behavior Scores by Empathy and Race", xlab= "Empathy Toward Others", ylab= "Prosocial Behavior")
-
-gss_2004_tbl %>% 
-  ggplot(aes(x= avg_att, y= avg_probehav, fill= SEX)) + 
-  geom_boxplot() +
-  labs(title= "Prosocial Behavior Scores by Empathy and Sex", xlab= "Empathy Toward Others", ylab= "Prosocial Behavior")
       
 #Analysis
 
