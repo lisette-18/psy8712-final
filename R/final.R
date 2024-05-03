@@ -16,30 +16,38 @@ gss_2004_import_tbl <- read_sav("../data/GSS2004.sav") %>%
          RACE = factor(RACE,
                        levels = c("1","2","3"),
                        labels = c("White", "Black", "Other")),
-         avg_att = rowMeans(across(c(EMPATHY1, EMPATHY2,EMPATHY3, EMPATHY4,EMPATHY5, EMPATHY6, EMPATHY7))), #lower scores is more accepting attitudes towards others
-         avg_probehav = rowMeans(across(c(GIVBLOOD, GIVHMLSS, RETCHNGE, CUTAHEAD, VOLCHRTY, GIVCHRTY, GIVSEAT, HELPAWAY, CARRIED, DIRECTNS, LOANITEM)))) %>%
-  #lower scores is more enacted pro social behavior
-  select(SEX, RACE, avg_att, avg_probehav)
+         avg_empathy = rowMeans(across(c(EMPATHY1, EMPATHY2,EMPATHY3, EMPATHY4,
+                                         EMPATHY5, EMPATHY6, EMPATHY7))), #greater scores is more empathy towards others
+         avg_probehav = rowMeans(across(c(GIVBLOOD, GIVHMLSS, RETCHNGE, CUTAHEAD, VOLCHRTY, GIVCHRTY, GIVSEAT,
+                                          HELPAWAY, CARRIED, DIRECTNS, LOANITEM))), #lower scores is more enacted pro social behavior
+         PARTYID = factor(PARTYID,
+                          levels = c("0", "3","6"),
+                          labels = c("Strong Democrat","Independent","Strong Republican")),
+        rel_strength = factor(RELSPRT1,
+                              levels = c("1", "2","3","4","5","6"),
+                              labels = c("Many times a day", "Every day", "Most days", "Some days", "Once in a while","Never/Almost Never"))) %>%
+  select(SEX, RACE, AGE, PARTYID, rel_strength, avg_empathy, avg_probehav)
 
-gss_2004_tbl <- gss_2004_import_tbl[complete.cases(gss_2004_import_tbl$avg_att, gss_2004_import_tbl$avg_probehav), ]
+gss_2004_tbl <- gss_2004_import_tbl[complete.cases(gss_2004_import_tbl$avg_empathy, gss_2004_import_tbl$avg_probehav, gss_2004_import_tbl$PARTYID, 
+                                                   gss_2004_import_tbl$AGE, gss_2004_import_tbl$rel_strength), ]
 
-#write_csv(gss_2004_tbl, "../data/gss_clean.csv")
+write_csv(gss_2004_tbl, "../data/gss_clean.csv")
 
 #clean data for shiny app
-gss_2004_shiny <- gss_2004_tbl %>%
-  select(SEX, RACE, avg_att, avg_probehav) %>%
+gss_shiny <- gss_2004_tbl %>%
+  select(SEX, RACE, AGE,PARTYID, rel_strength, avg_empathy, avg_probehav) %>%
   saveRDS("../shiny/gss_shiny/import.RDS")
 
 #Visualization
 
 gss_2004_tbl %>%
-  ggplot(aes(x=avg_att, y=avg_probehav)) +
+  ggplot(aes(x=avg_empathy, y=avg_probehav)) +
   geom_point() +
   geom_smooth(method="lm", color="purple") +
-  labs(x = "Attitudes Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Attitudes and Prosocial Behavior")
+  labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Empathy and Prosocial Behavior")
 
 ggplot(gss_2004_tbl,
-       aes(x=avg_att)) +
+       aes(x=avg_empathy)) +
   geom_histogram()
 
 ggplot(gss_2004_tbl,
@@ -47,26 +55,26 @@ ggplot(gss_2004_tbl,
   geom_histogram()
 
 gss_2004_tbl %>%
-  ggplot(aes(x=avg_att, y=avg_probehav, color = SEX)) +
+  ggplot(aes(x=avg_empathy, y=avg_probehav, color = SEX)) +
   geom_point() +
   geom_smooth(method="lm", color="purple") +
-  labs(x = "Attitudes Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Attitudes and Prosocial Behavior")
+  labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Empathy and Prosocial Behavior")
 
 gss_2004_tbl %>%
   ggplot(aes(x=avg_att, y=avg_probehav, color = RACE)) +
   geom_point() +
   geom_smooth(method="lm", color="purple") +
-  labs(x = "Attitudes Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Attitudes and Prosocial Behavior")
+  labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Empathy and Prosocial Behavior")
 
 gss_2004_tbl %>% 
   ggplot(aes(x= avg_att, y= avg_probehav, fill= RACE)) + 
   geom_boxplot() +
-  labs(title= "Prosocial Behavior Scores by Attitudes and Race", xlab= "Attitudes Toward Others", ylab= "Prosocial Behavior")
+  labs(title= "Prosocial Behavior Scores by Empathy and Race", xlab= "Empathy Toward Others", ylab= "Prosocial Behavior")
 
 gss_2004_tbl %>% 
   ggplot(aes(x= avg_att, y= avg_probehav, fill= SEX)) + 
   geom_boxplot() +
-  labs(title= "Prosocial Behavior Scores by Attitudes and Sex", xlab= "Attitudes Toward Others", ylab= "Prosocial Behavior")
+  labs(title= "Prosocial Behavior Scores by Empathy and Sex", xlab= "Empathy Toward Others", ylab= "Prosocial Behavior")
       
 #Analysis
 
