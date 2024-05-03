@@ -10,33 +10,34 @@ set.seed(8712)
 gss_2004_import_tbl <- read_sav("../data/GSS2004.sav") %>%
   select(-where(~mean(is.na(.))>.75)) %>%
   mutate(across(everything(), as.numeric)) %>%
-  mutate(SEX = factor(SEX,
+  mutate(sex = factor(SEX,
                       levels=c("1","2"),
                       labels=c("Male","Female")), 
          exclude = NA,
-         RACE = factor(RACE,
+         race = factor(RACE,
                        levels = c("1","2","3"),
                        labels = c("White", "Black", "Other")),
          avg_empathy = rowMeans(across(c(EMPATHY1, EMPATHY2,EMPATHY3, EMPATHY4,
                                          EMPATHY5, EMPATHY6, EMPATHY7))), #greater scores is more empathy towards others
          avg_probehav = rowMeans(across(c(GIVBLOOD, GIVHMLSS, RETCHNGE, CUTAHEAD, VOLCHRTY, GIVCHRTY, GIVSEAT,
                                           HELPAWAY, CARRIED, DIRECTNS, LOANITEM))), #lower scores is more enacted pro social behavior
-         PARTYID = factor(PARTYID,
+         partyid = factor(PARTYID,
                           levels = c("0", "3","6"),
                           labels = c("Strong Democrat","Independent","Strong Republican")),
         rel_strength = factor(RELSPRT1,
                               levels = c("1", "2","3","4","5","6"),
-                              labels = c("Many times a day", "Every day", "Most days", "Some days", "Once in a while","Never/Almost Never"))) %>%
-  select(SEX, RACE, AGE, PARTYID, rel_strength, avg_empathy, avg_probehav)
+                              labels = c("Many times a day", "Every day", "Most days", "Some days", "Once in a while","Never/Almost Never")),
+  age = AGE) %>%
+  select(sex, race, age, partyid, rel_strength, avg_empathy, avg_probehav)
 
-gss_2004_tbl <- gss_2004_import_tbl[complete.cases(gss_2004_import_tbl$avg_empathy, gss_2004_import_tbl$avg_probehav, gss_2004_import_tbl$PARTYID, 
-                                                   gss_2004_import_tbl$AGE, gss_2004_import_tbl$rel_strength), ]
+gss_2004_tbl <- gss_2004_import_tbl[complete.cases(gss_2004_import_tbl$avg_empathy, gss_2004_import_tbl$avg_probehav, gss_2004_import_tbl$partyid, 
+                                                   gss_2004_import_tbl$age, gss_2004_import_tbl$rel_strength), ]
 
 #write_csv(gss_2004_tbl, "../data/gss_clean.csv")
 
 ##clean data for shiny app
 gss_shiny <- gss_2004_tbl %>%
-  select(SEX, RACE, AGE,PARTYID, rel_strength, avg_empathy, avg_probehav) %>%
+  select(sex, race, age,partyid, rel_strength, avg_empathy, avg_probehav) %>%
   saveRDS("../shiny/gss_shiny/import.RDS")
 
 #Visualization
@@ -60,31 +61,43 @@ ggplot(aes(x = avg_probehav)) +
   ggsave("../figs/fig3.png", ., width=1920, height=1080, units="px")
 
 (gss_2004_tbl %>%
-    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = RACE)) +
+    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = race)) +
     geom_boxplot() +
     labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Boxplot of Empathy and Race on Prosocial Behavior")) %>%
     ggsave("../figs/fig4.png", ., width=1920, height=1080, units="px")
   
 (gss_2004_tbl %>%
-    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = SEX)) +
+    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = sex)) +
     geom_boxplot()+
     labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Boxplot of Empathy and Sex on Prosocial Behavior")) %>%
   ggsave("../figs/fig5.png", ., width=1920, height=1080, units="px")
 
 
+(gss_2004_tbl %>%
+    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = partyid)) +
+    geom_boxplot()+
+    labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Boxplot of Empathy and Party ID on Prosocial Behavior")) %>%
+  ggsave("../figs/fig6.png", ., width=1920, height=1080, units="px")
+
+
+(gss_2004_tbl %>%
+    ggplot(aes(x = avg_empathy, y = avg_probehav, fill = rel_strength)) +
+    geom_boxplot()+
+    labs(x = "Empathy Toward Others", y = "Prosocial Behavior", title = "Boxplot of Empathy and Religious Strength on Prosocial Behavior", fill = "Finding Strength in Religion")) %>%
+  ggsave("../figs/fig7.png", ., width=1920, height=1080, units="px")
 
       
 #Analysis
 
 ##correlation between attitudes and behaviors for Research Q1
-cor.test(gss_2004_tbl$avg_att, gss_2004_tbl$avg_probehav)
+cor.test(gss_2004_tbl$avg_empathy, gss_2004_tbl$avg_probehav)
 
 ##liner regression model for Research Q2
-lm1 <- lm(avg_probehav ~ SEX * avg_att, data = gss_2004_tbl)
+lm1 <- lm(avg_probehav ~ sex * avg_empathy, data = gss_2004_tbl)
 summary(lm1)
 
 ##linear regression model for Research Q3
-lm2 <- lm(avg_probehav ~ RACE * avg_att, data = gss_2004_tbl)
+lm2 <- lm(avg_probehav ~ race * avg_empathy, data = gss_2004_tbl)
 summary(lm2)
 
 ##machine learning models

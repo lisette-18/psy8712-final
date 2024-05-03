@@ -1,4 +1,4 @@
-SEX,RACE,AGE,PARTYID,rel_strength,avg_empathy,avg_probehav
+sex,race,age,partyid,rel_strength,avg_empathy,avg_probehav
 Male,White,53,Strong Democrat,Every day,3.2857142857142856,3.1818181818181817
 Male,Other,24,Strong Democrat,Never/Almost Never,3.7142857142857144,4.454545454545454
 Male,Black,42,Independent,Never/Almost Never,3.5714285714285716,4.090909090909091
