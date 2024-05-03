@@ -31,3 +31,23 @@ gss_2004_shiny <- gss_2004_tbl %>%
 
 #Visualization
 
+gss_2004_tbl %>%
+  ggplot(aes(x=avg_att, y=avg_probehav)) +
+  geom_point() +
+  geom_smooth(method="lm", color="purple") +
+  labs(x = "Attitudes Toward Others", y = "Prosocial Behavior", title = "Scatterplot of Average Attitudes and Prosocial Behavior")
+
+ggplot(gss_2004_tbl,
+       aes(x=avg_att)) +
+  geom_histogram()
+
+ggplot(gss_2004_tbl,
+       aes(x = avg_probehav)) +
+  geom_histogram()
+
+
+#Analysis
+
+##correlation between attitudes and behaviors
+cor.test(gss_2004_tbl$avg_att, gss_2004_tbl$avg_probehav)
+
