@@ -1,0 +1,12 @@
+name: final_shiny
+title: final_shiny
+username: lisette-18
+account: lisette-18
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11934094
+bundleId: 8575961
+url: https://lisette-18.shinyapps.io/final_shiny/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
