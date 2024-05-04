@@ -99,6 +99,7 @@ sex <- gss_2004_tbl %>% #saving as a tibble so I can display the table in the pu
             sd_empathy = sd(avg_empathy),
             avg_pb = mean(avg_probehav),
             sd_pb = sd(avg_probehav))
+  
 
 race <- gss_2004_tbl %>% #saving as a tibble so I can display the table in the publication section
   group_by(race) %>% 
@@ -128,7 +129,7 @@ rel_strength <- gss_2004_tbl %>% #saving as a tibble so I can display the table 
 ##write_csv(age, "../figs/age.csv")
 ##write_csv(rel_strength, "../figs/rel_strength.csv")
 ##write_csv(race, "../figs/race.csv")
-##write(sex, "../figs/sex.csv")
+##write_csv(sex, "../figs/sex.csv")
 
 ##correlation between attitudes and behaviors 
 cor.test(gss_2004_tbl$avg_empathy, gss_2004_tbl$avg_probehav)
