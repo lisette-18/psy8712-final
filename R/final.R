@@ -154,7 +154,7 @@ summary(lm4)
 lm5 <- lm(avg_probehav ~ rel_strength * avg_empathy, data = gss_2004_tbl)
 summary(lm5)
 
-##linear regression model for all potential moderators
+##linear regression model for all potential predictors
 lm6 <- lm(avg_probehav ~ . , data = gss_2004_tbl)
 summary(lm6)
 
@@ -268,7 +268,7 @@ table1_tbl <- tibble(
 
 print(partyid)
 
-#View(age) a lot of variables so view is better
+#View(age) #a lot of variables so view is better
 
 print(sex)
 
@@ -279,6 +279,6 @@ print(rel_strength)
 print(table1_tbl)
 
 ##clean data for shiny app
-gss_shiny <- gss_2004_tbl %>%
+gss_2004_tbl %>%
   select(sex, race, age, partyid, rel_strength, avg_empathy, avg_probehav) %>%
   saveRDS("../shiny/gss_shiny/import.RDS")
