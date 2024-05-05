@@ -6,7 +6,7 @@ Dataset: The project uses the 2004 GSS dataset to explore empathy and prosocial 
 
 Project Description: This dataset tests the following three questions: 1) Is there a correlation between one’s reported empathy towards others and there reported prosocial behavior?, 2) Do demographic variables moderate people’s reported empathy toward others and enacted prosocial behavior?, and 3) Can empathy and demographic variables be used to predict enacted prosocial behavior utilizing machine learning models?
 
-Project Reproduce
+Project Reproducing Steps
 
 Folder: The project includes 5 folders: R, data, docs, figs, shiny/gss_shiny
 
